@@ -27,6 +27,10 @@ function App() {
     setTransactions((prev) => [...prev, transactionWithDefaults]);
   };
 
+  const handleDeleteTransaction = (id) => {
+    setTransactions((prev) => prev.filter((t) => t.id !== id));
+  };
+
   return (
     <div className="app">
       <h1>Finance Tracker</h1>
@@ -36,7 +40,11 @@ function App() {
 
       <TransactionForm onAddTransaction={handleAddTransaction} categories={categories} />
 
-      <TransactionList transactions={transactions} categories={categories} />
+      <TransactionList
+        transactions={transactions}
+        categories={categories}
+        onDeleteTransaction={handleDeleteTransaction}
+      />
     </div>
   );
 }

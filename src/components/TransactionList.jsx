@@ -18,9 +18,27 @@ function TransactionList({
   filterCategory: controlledFilterCategory,
   setFilterCategory: controlledSetFilterCategory,
   filteredTransactions: passedFilteredTransactions,
+  onDeleteTransaction,
+  deleteTransaction,
+  onDelete,
+  setTransactions,
 }) {
   const [internalFilterType, setInternalFilterType] = useState('all');
   const [internalFilterCategory, setInternalFilterCategory] = useState('all');
+
+  const handleDelete =
+    onDeleteTransaction ||
+    deleteTransaction ||
+    onDelete ||
+    (setTransactions
+      ? (id) => setTransactions((prev) => prev.filter((t) => t.id !== id))
+      : null);
+
+  const handleDeleteClick = (id) => {
+    if (window.confirm('Are you sure you want to delete this transaction?')) {
+      handleDelete(id);
+    }
+  };
 
   const filterType =
     controlledFilterType !== undefined
@@ -82,6 +100,7 @@ function TransactionList({
             <th>Description</th>
             <th>Category</th>
             <th>Amount</th>
+            {handleDelete && <th>Action</th>}
           </tr>
         </thead>
         <tbody>
@@ -97,6 +116,16 @@ function TransactionList({
               >
                 {t.type === 'income' ? '+' : '-'}${t.amount}
               </td>
+              {handleDelete && (
+                <td>
+                  <button
+                    className="delete-btn"
+                    onClick={() => handleDeleteClick(t.id)}
+                  >
+                    Delete
+                  </button>
+                </td>
+              )}
             </tr>
           ))}
         </tbody>

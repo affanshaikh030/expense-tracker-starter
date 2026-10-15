@@ -16,7 +16,7 @@ This is a single-page React expense tracker app built with Vite. The codebase is
 - **`src/App.jsx`**: The main container component that manages the primary `transactions` state and orchestrates child components.
 - **`src/components/Summary.jsx`**: Receives `transactions` as a prop, calculates total income, total expenses, and net balance, and renders summary metric cards.
 - **`src/components/TransactionForm.jsx`**: Encapsulates form state (`description`, `amount`, `type`, `category`) and submits new transactions to the parent via `onAddTransaction`.
-- **`src/components/TransactionList.jsx`**: Manages filtering controls (by type and category) and renders the filtered transaction table.
+- **`src/components/TransactionList.jsx`**: Manages filtering controls (by type and category), renders the filtered transaction table, and supports deleting transactions via `onDeleteTransaction`.
 - **Root re-exports** (`src/Summary.jsx`, `src/TransactionForm.jsx`, `src/TransactionList.jsx`): Re-export components from `src/components/` for convenient root-level imports.
 
 **Known intentional issues / notes:**
