@@ -15,13 +15,15 @@ This is a single-page React expense tracker app built with Vite. The codebase is
 
 - **`src/App.jsx`**: The main container component that manages the primary `transactions` state and orchestrates child components.
 - **`src/components/Summary.jsx`**: Receives `transactions` as a prop, calculates total income, total expenses, and net balance, and renders summary metric cards.
+- **`src/components/SpendingChart.jsx`**: Visualizes expense spending aggregated by category using Recharts (supporting both responsive Bar and Pie chart views with tooltips and legends).
 - **`src/components/TransactionForm.jsx`**: Encapsulates form state (`description`, `amount`, `type`, `category`) and submits new transactions to the parent via `onAddTransaction`.
 - **`src/components/TransactionList.jsx`**: Manages filtering controls (by type and category), renders the filtered transaction table, and supports deleting transactions via `onDeleteTransaction`.
-- **Root re-exports** (`src/Summary.jsx`, `src/TransactionForm.jsx`, `src/TransactionList.jsx`): Re-export components from `src/components/` for convenient root-level imports.
+- **Root re-exports** (`src/Summary.jsx`, `src/SpendingChart.jsx`, `src/TransactionForm.jsx`, `src/TransactionList.jsx`): Re-export components from `src/components/` for convenient root-level imports.
 
 **Known intentional issues / notes:**
-- Transaction amounts were originally stored as strings; calculations in `Summary.jsx` parse amounts with `parseFloat` to prevent string concatenation.
+- Transaction amounts were originally stored as strings; calculations in `Summary.jsx` and `SpendingChart.jsx` parse amounts with `parseFloat` to prevent string concatenation.
 - In the initial seed data, "Freelance Work" is mislabeled as an expense as part of course exercises.
+- Uses `recharts` alongside `react-is` for React 19 compatibility.
 
 ## Lint
 
