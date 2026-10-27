@@ -14,13 +14,13 @@ import {
 } from 'recharts';
 
 import { CATEGORY_COLORS, PALETTE } from '../constants';
-import { capitalize, formatCurrency } from '../utils/format';
+import { capitalize, formatCurrency, normalizeCategory } from '../utils/format';
 
 function CustomChartTooltip({ active, payload, totalExpense = 0 }) {
   if (active && payload && payload.length) {
     const item = payload[0];
     const val = item.value;
-    const share = totalExpense > 0 ? ((val / totalExpense) * 100).toFixed(1) : 0;
+    const share = totalExpense > 0 ? ((val / totalExpense) * 100).toFixed(1) : '0.0';
     const labelName = item.name || item.payload?.name || '';
     return (
       <div className="custom-chart-tooltip">
@@ -56,7 +56,7 @@ function SpendingChart({ transactions = [] }) {
     const spendingByCategory = transactions
       .filter((t) => t.type === 'expense')
       .reduce((acc, t) => {
-        const category = (t.category || 'other').toLowerCase();
+        const category = normalizeCategory(t.category);
         const amount = parseFloat(t.amount) || 0;
         acc[category] = (acc[category] || 0) + amount;
         return acc;

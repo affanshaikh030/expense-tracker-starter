@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { CATEGORIES } from '../constants';
-import { capitalize, formatCurrency } from '../utils/format';
+import { capitalize, formatCurrency, normalizeCategory } from '../utils/format';
 
 function TransactionList({
   transactions = [],
@@ -50,7 +50,7 @@ function TransactionList({
       transactions.filter(
         (t) =>
           (filterType === 'all' || t.type === filterType) &&
-          (filterCategory === 'all' || t.category === filterCategory)
+          (filterCategory === 'all' || normalizeCategory(t.category) === filterCategory)
       ),
     [passedFilteredTransactions, transactions, filterType, filterCategory]
   );

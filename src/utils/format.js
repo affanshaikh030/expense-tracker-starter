@@ -4,4 +4,6 @@ export const formatCurrency = (val) =>
     maximumFractionDigits: 2,
   });
 
+export const normalizeCategory = (category) => (category || 'other').toLowerCase();
+
 export const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
