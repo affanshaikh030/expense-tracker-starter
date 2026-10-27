@@ -1,13 +1,20 @@
+import { useMemo } from 'react';
 import { formatCurrency } from '../utils/format';
 
 function Summary({ transactions = [] }) {
-  const totalIncome = transactions
-    .filter((t) => t.type === 'income')
-    .reduce((sum, t) => sum + parseFloat(t.amount || 0), 0);
-
-  const totalExpenses = transactions
-    .filter((t) => t.type === 'expense')
-    .reduce((sum, t) => sum + parseFloat(t.amount || 0), 0);
+  const { totalIncome, totalExpenses } = useMemo(
+    () =>
+      transactions.reduce(
+        (totals, t) => {
+          const amount = parseFloat(t.amount || 0);
+          if (t.type === 'income') totals.totalIncome += amount;
+          else if (t.type === 'expense') totals.totalExpenses += amount;
+          return totals;
+        },
+        { totalIncome: 0, totalExpenses: 0 }
+      ),
+    [transactions]
+  );
 
   const balance = totalIncome - totalExpenses;
 

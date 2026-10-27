@@ -94,7 +94,7 @@ function SpendingChart({ transactions = [] }) {
               type="button"
               className={`chart-toggle-btn ${chartType === 'bar' ? 'active' : ''}`}
               onClick={() => setChartType('bar')}
-              aria-label="Switch to Bar Chart"
+              aria-pressed={chartType === 'bar'}
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <line x1="18" y1="20" x2="18" y2="10"></line>
@@ -107,7 +107,7 @@ function SpendingChart({ transactions = [] }) {
               type="button"
               className={`chart-toggle-btn ${chartType === 'pie' ? 'active' : ''}`}
               onClick={() => setChartType('pie')}
-              aria-label="Switch to Pie Chart"
+              aria-pressed={chartType === 'pie'}
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
