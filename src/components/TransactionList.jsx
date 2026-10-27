@@ -2,57 +2,24 @@ import { useMemo, useState } from 'react';
 import { CATEGORIES } from '../constants';
 import { capitalize, formatCurrency, normalizeCategory } from '../utils/format';
 
-function TransactionList({
-  transactions = [],
-  filterType: controlledFilterType,
-  setFilterType: controlledSetFilterType,
-  filterCategory: controlledFilterCategory,
-  setFilterCategory: controlledSetFilterCategory,
-  filteredTransactions: passedFilteredTransactions,
-  onDeleteTransaction,
-  deleteTransaction,
-  onDelete,
-  setTransactions,
-}) {
-  const [internalFilterType, setInternalFilterType] = useState('all');
-  const [internalFilterCategory, setInternalFilterCategory] = useState('all');
-
-  const handleDelete =
-    onDeleteTransaction ||
-    deleteTransaction ||
-    onDelete ||
-    (setTransactions
-      ? (id) => setTransactions((prev) => prev.filter((t) => t.id !== id))
-      : null);
+function TransactionList({ transactions = [], onDeleteTransaction }) {
+  const [filterType, setFilterType] = useState('all');
+  const [filterCategory, setFilterCategory] = useState('all');
 
   const handleDeleteClick = (id) => {
     if (window.confirm('Are you sure you want to delete this transaction?')) {
-      handleDelete(id);
+      onDeleteTransaction(id);
     }
   };
 
-  const filterType =
-    controlledFilterType !== undefined
-      ? controlledFilterType
-      : internalFilterType;
-  const setFilterType = controlledSetFilterType || setInternalFilterType;
-
-  const filterCategory =
-    controlledFilterCategory !== undefined
-      ? controlledFilterCategory
-      : internalFilterCategory;
-  const setFilterCategory =
-    controlledSetFilterCategory || setInternalFilterCategory;
-
   const displayTransactions = useMemo(
     () =>
-      passedFilteredTransactions ||
       transactions.filter(
         (t) =>
           (filterType === 'all' || t.type === filterType) &&
           (filterCategory === 'all' || normalizeCategory(t.category) === filterCategory)
       ),
-    [passedFilteredTransactions, transactions, filterType, filterCategory]
+    [transactions, filterType, filterCategory]
   );
 
   return (
@@ -102,13 +69,13 @@ function TransactionList({
               <th scope="col">Description</th>
               <th scope="col">Category</th>
               <th scope="col">Amount</th>
-              {handleDelete && <th scope="col">Action</th>}
+              <th scope="col">Action</th>
             </tr>
           </thead>
           <tbody>
             {displayTransactions.length === 0 ? (
               <tr>
-                <td colSpan={handleDelete ? 5 : 4} className="empty-table-cell">
+                <td colSpan={5} className="empty-table-cell">
                   <div className="empty-table-state">
                     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                       <circle cx="12" cy="12" r="10"></circle>
@@ -137,22 +104,20 @@ function TransactionList({
                       {t.type === 'income' ? '+' : '-'}${formatCurrency(t.amount)}
                     </span>
                   </td>
-                  {handleDelete && (
-                    <td className="action-cell">
-                      <button
-                        type="button"
-                        className="delete-btn"
-                        onClick={() => handleDeleteClick(t.id)}
-                        aria-label={`Delete ${t.description}`}
-                      >
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                          <polyline points="3 6 5 6 21 6"></polyline>
-                          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                        </svg>
-                        <span>Delete</span>
-                      </button>
-                    </td>
-                  )}
+                  <td className="action-cell">
+                    <button
+                      type="button"
+                      className="delete-btn"
+                      onClick={() => handleDeleteClick(t.id)}
+                      aria-label={`Delete ${t.description}`}
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                      </svg>
+                      <span>Delete</span>
+                    </button>
+                  </td>
                 </tr>
               ))
             )}
