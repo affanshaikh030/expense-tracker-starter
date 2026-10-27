@@ -14,11 +14,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a single-page React expense tracker app built with Vite. The codebase is organized into modular child components:
 
-- **`src/App.jsx`**: The main container component that manages the primary `transactions` state and orchestrates child components.
-- **`src/components/Summary.jsx`**: Receives `transactions` as a prop, calculates total income, total expenses, and net balance, and renders summary metric cards.
-- **`src/components/SpendingChart.jsx`**: Visualizes expense spending aggregated by category using Recharts (supporting both responsive Bar and Pie chart views with tooltips and legends).
-- **`src/components/TransactionForm.jsx`**: Encapsulates form state (`description`, `amount`, `type`, `category`) and submits new transactions to the parent via `onAddTransaction`.
-- **`src/components/TransactionList.jsx`**: Manages filtering controls (by type and category), renders the filtered transaction table, and supports deleting transactions via `onDeleteTransaction`.
+- **`src/App.jsx`**: The main container component that manages the primary `transactions` state (seeded from `INITIAL_TRANSACTIONS`) and orchestrates child components. It owns transaction `id` (`crypto.randomUUID()`) and `date` creation in `handleAddTransaction`.
+- **`src/constants.js`**: Shared `CATEGORIES`, `CATEGORY_COLORS`, `PALETTE`, and the seed `INITIAL_TRANSACTIONS`.
+- **`src/utils/format.js`**: Shared helpers `formatCurrency`, `capitalize`, and `normalizeCategory` (lowercases, defaults to `other`).
+- **`src/components/Summary.jsx`**: Receives `transactions` as a prop, calculates total income, total expenses, and net balance in a single memoized pass, and renders summary metric cards.
+- **`src/components/SpendingChart.jsx`**: Visualizes expense spending aggregated by category using Recharts (supporting both responsive Bar and Pie chart views with tooltips and legends). Aggregation is memoized and static Recharts props are hoisted to module constants.
+- **`src/components/TransactionForm.jsx`**: Encapsulates form state (a single `form` object with `description`, `amount`, `type`, `category`), validates input (trimmed description, positive finite amount, inline error), and submits only those four fields to the parent via `onAddTransaction`.
+- **`src/components/TransactionList.jsx`**: Takes only `transactions` and `onDeleteTransaction`. Manages filtering controls (by type and category) internally, renders the memoized filtered transaction table, and supports deleting transactions.
 - **Root re-exports** (`src/Summary.jsx`, `src/SpendingChart.jsx`, `src/TransactionForm.jsx`, `src/TransactionList.jsx`): Re-export components from `src/components/` for convenient root-level imports.
 
 **Skills & Workflows:**
