@@ -2,11 +2,16 @@ import { useState } from 'react';
 import { CATEGORIES } from '../constants';
 import { capitalize } from '../utils/format';
 
+const INITIAL_FORM = {
+  description: '',
+  amount: '',
+  type: 'expense',
+  category: 'food',
+};
+
 function TransactionForm({ onAddTransaction }) {
-  const [description, setDescription] = useState('');
-  const [amount, setAmount] = useState('');
-  const [type, setType] = useState('expense');
-  const [category, setCategory] = useState('food');
+  const [form, setForm] = useState(INITIAL_FORM);
+  const { description, amount, type, category } = form;
   const [error, setError] = useState('');
 
   const handleSubmit = (e) => {
@@ -26,11 +31,11 @@ function TransactionForm({ onAddTransaction }) {
     onAddTransaction({ description: trimmedDescription, amount, type, category });
 
     setError('');
-    setDescription('');
-    setAmount('');
-    setType('expense');
-    setCategory('food');
+    setForm(INITIAL_FORM);
   };
+
+  const handleChange = (field) => (e) =>
+    setForm((prev) => ({ ...prev, [field]: e.target.value }));
 
   return (
     <div className="add-transaction">
@@ -46,7 +51,7 @@ function TransactionForm({ onAddTransaction }) {
             type="text"
             placeholder="e.g. Monthly Rent, Coffee, Client Invoice"
             value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            onChange={handleChange('description')}
             required
           />
         </div>
@@ -62,7 +67,7 @@ function TransactionForm({ onAddTransaction }) {
               min="0.01"
               placeholder="0.00"
               value={amount}
-              onChange={(e) => setAmount(e.target.value)}
+              onChange={handleChange('amount')}
               required
             />
           </div>
@@ -70,7 +75,7 @@ function TransactionForm({ onAddTransaction }) {
 
         <div className="form-group form-group-type">
           <label htmlFor="tx-type">Type</label>
-          <select id="tx-type" value={type} onChange={(e) => setType(e.target.value)}>
+          <select id="tx-type" value={type} onChange={handleChange('type')}>
             <option value="income">Income (+)</option>
             <option value="expense">Expense (-)</option>
           </select>
@@ -78,7 +83,7 @@ function TransactionForm({ onAddTransaction }) {
 
         <div className="form-group form-group-category">
           <label htmlFor="tx-category">Category</label>
-          <select id="tx-category" value={category} onChange={(e) => setCategory(e.target.value)}>
+          <select id="tx-category" value={category} onChange={handleChange('category')}>
             {CATEGORIES.map((cat) => (
               <option key={cat} value={cat}>
                 {capitalize(cat)}

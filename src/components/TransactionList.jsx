@@ -95,14 +95,14 @@ function TransactionList({
       </div>
 
       <div className="table-responsive">
-        <table>
+        <table aria-label="Transaction history">
           <thead>
             <tr>
-              <th>Date</th>
-              <th>Description</th>
-              <th>Category</th>
-              <th>Amount</th>
-              {handleDelete && <th>Action</th>}
+              <th scope="col">Date</th>
+              <th scope="col">Description</th>
+              <th scope="col">Category</th>
+              <th scope="col">Amount</th>
+              {handleDelete && <th scope="col">Action</th>}
             </tr>
           </thead>
           <tbody>
@@ -140,6 +140,7 @@ function TransactionList({
                   {handleDelete && (
                     <td className="action-cell">
                       <button
+                        type="button"
                         className="delete-btn"
                         onClick={() => handleDeleteClick(t.id)}
                         aria-label={`Delete ${t.description}`}
