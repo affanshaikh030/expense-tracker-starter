@@ -21,9 +21,9 @@ function App() {
 
   const handleAddTransaction = (newTransaction) => {
     const transactionWithDefaults = {
-      id: Date.now(),
-      date: new Date().toISOString().split('T')[0],
       ...newTransaction,
+      id: crypto.randomUUID(),
+      date: new Date().toISOString().split('T')[0],
     };
     setTransactions((prev) => [...prev, transactionWithDefaults]);
   };

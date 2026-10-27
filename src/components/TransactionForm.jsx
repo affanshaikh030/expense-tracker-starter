@@ -12,36 +12,31 @@ const DEFAULT_CATEGORIES = [
 
 function TransactionForm({
   onAddTransaction,
-  addTransaction,
-  setTransactions,
   categories = DEFAULT_CATEGORIES,
 }) {
   const [description, setDescription] = useState('');
   const [amount, setAmount] = useState('');
   const [type, setType] = useState('expense');
   const [category, setCategory] = useState('food');
+  const [error, setError] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!description || !amount) return;
 
-    const newTransaction = {
-      id: Date.now(),
-      description,
-      amount,
-      type,
-      category,
-      date: new Date().toISOString().split('T')[0],
-    };
-
-    if (onAddTransaction) {
-      onAddTransaction(newTransaction);
-    } else if (addTransaction) {
-      addTransaction(newTransaction);
-    } else if (setTransactions) {
-      setTransactions((prev) => [...prev, newTransaction]);
+    const trimmedDescription = description.trim();
+    const value = parseFloat(amount);
+    if (!trimmedDescription) {
+      setError('Please enter a description.');
+      return;
+    }
+    if (!Number.isFinite(value) || value <= 0) {
+      setError('Amount must be greater than 0.');
+      return;
     }
 
+    onAddTransaction({ description: trimmedDescription, amount, type, category });
+
+    setError('');
     setDescription('');
     setAmount('');
     setType('expense');
@@ -75,7 +70,7 @@ function TransactionForm({
               id="tx-amount"
               type="number"
               step="any"
-              min="0"
+              min="0.01"
               placeholder="0.00"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
@@ -112,6 +107,12 @@ function TransactionForm({
             <span>Add</span>
           </button>
         </div>
+
+        {error && (
+          <p className="form-error" role="alert">
+            {error}
+          </p>
+        )}
       </form>
     </div>
   );
