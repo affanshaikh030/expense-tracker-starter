@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   ResponsiveContainer,
   BarChart,
@@ -13,25 +13,8 @@ import {
   Legend,
 } from 'recharts';
 
-const CATEGORY_COLORS = {
-  food: '#F59E0B',
-  housing: '#3B82F6',
-  utilities: '#8B5CF6',
-  transport: '#06B6D4',
-  entertainment: '#EC4899',
-  salary: '#10B981',
-  other: '#64748B',
-};
-
-const PALETTE = [
-  '#3B82F6',
-  '#F59E0B',
-  '#8B5CF6',
-  '#06B6D4',
-  '#EC4899',
-  '#10B981',
-  '#64748B',
-];
+import { CATEGORY_COLORS, PALETTE } from '../constants';
+import { capitalize, formatCurrency } from '../utils/format';
 
 function CustomChartTooltip({ active, payload, totalExpense = 0 }) {
   if (active && payload && payload.length) {
@@ -43,7 +26,7 @@ function CustomChartTooltip({ active, payload, totalExpense = 0 }) {
       <div className="custom-chart-tooltip">
         <p className="tooltip-label">{labelName}</p>
         <p className="tooltip-value">
-          ${Number(val).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          ${formatCurrency(val)}
         </p>
         <span className="tooltip-share">{share}% of total spending</span>
       </div>
@@ -59,23 +42,28 @@ const renderLegendText = (value) => (
 function SpendingChart({ transactions = [] }) {
   const [chartType, setChartType] = useState('bar');
 
-  const spendingByCategory = transactions
-    .filter((t) => t.type === 'expense')
-    .reduce((acc, t) => {
-      const category = (t.category || 'other').toLowerCase();
-      const amount = parseFloat(t.amount) || 0;
-      acc[category] = (acc[category] || 0) + amount;
-      return acc;
-    }, {});
+  const { data, totalExpense } = useMemo(() => {
+    const spendingByCategory = transactions
+      .filter((t) => t.type === 'expense')
+      .reduce((acc, t) => {
+        const category = (t.category || 'other').toLowerCase();
+        const amount = parseFloat(t.amount) || 0;
+        acc[category] = (acc[category] || 0) + amount;
+        return acc;
+      }, {});
 
-  const data = Object.entries(spendingByCategory).map(([category, amount], idx) => ({
-    rawCategory: category,
-    name: category.charAt(0).toUpperCase() + category.slice(1),
-    amount: Number(amount.toFixed(2)),
-    color: CATEGORY_COLORS[category] || PALETTE[idx % PALETTE.length],
-  }));
+    const categoryData = Object.entries(spendingByCategory).map(([category, amount], idx) => ({
+      rawCategory: category,
+      name: capitalize(category),
+      amount: Number(amount.toFixed(2)),
+      color: CATEGORY_COLORS[category] || PALETTE[idx % PALETTE.length],
+    }));
 
-  const totalExpense = data.reduce((sum, item) => sum + item.amount, 0);
+    return {
+      data: categoryData,
+      totalExpense: categoryData.reduce((sum, item) => sum + item.amount, 0),
+    };
+  }, [transactions]);
 
   return (
     <div className="spending-chart">

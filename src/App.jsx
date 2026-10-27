@@ -17,8 +17,6 @@ function App() {
     { id: 8, description: "Netflix", amount: "15", type: "expense", category: "entertainment", date: "2025-01-10" },
   ]);
 
-  const categories = ["food", "housing", "utilities", "transport", "entertainment", "salary", "other"];
-
   const handleAddTransaction = (newTransaction) => {
     const transactionWithDefaults = {
       ...newTransaction,
@@ -57,11 +55,10 @@ function App() {
 
         <SpendingChart transactions={transactions} />
 
-        <TransactionForm onAddTransaction={handleAddTransaction} categories={categories} />
+        <TransactionForm onAddTransaction={handleAddTransaction} />
 
         <TransactionList
           transactions={transactions}
-          categories={categories}
           onDeleteTransaction={handleDeleteTransaction}
         />
       </main>

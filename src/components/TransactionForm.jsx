@@ -1,19 +1,8 @@
 import { useState } from 'react';
+import { CATEGORIES } from '../constants';
+import { capitalize } from '../utils/format';
 
-const DEFAULT_CATEGORIES = [
-  'food',
-  'housing',
-  'utilities',
-  'transport',
-  'entertainment',
-  'salary',
-  'other',
-];
-
-function TransactionForm({
-  onAddTransaction,
-  categories = DEFAULT_CATEGORIES,
-}) {
+function TransactionForm({ onAddTransaction }) {
   const [description, setDescription] = useState('');
   const [amount, setAmount] = useState('');
   const [type, setType] = useState('expense');
@@ -90,9 +79,9 @@ function TransactionForm({
         <div className="form-group form-group-category">
           <label htmlFor="tx-category">Category</label>
           <select id="tx-category" value={category} onChange={(e) => setCategory(e.target.value)}>
-            {categories.map((cat) => (
+            {CATEGORIES.map((cat) => (
               <option key={cat} value={cat}>
-                {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                {capitalize(cat)}
               </option>
             ))}
           </select>

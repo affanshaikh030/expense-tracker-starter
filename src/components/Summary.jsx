@@ -1,3 +1,5 @@
+import { formatCurrency } from '../utils/format';
+
 function Summary({ transactions = [] }) {
   const totalIncome = transactions
     .filter((t) => t.type === 'income')
@@ -8,12 +10,6 @@ function Summary({ transactions = [] }) {
     .reduce((sum, t) => sum + parseFloat(t.amount || 0), 0);
 
   const balance = totalIncome - totalExpenses;
-
-  const formatCurrency = (val) =>
-    Number(val).toLocaleString('en-US', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    });
 
   return (
     <div className="summary">

@@ -1,18 +1,9 @@
 import { useState } from 'react';
-
-const DEFAULT_CATEGORIES = [
-  'food',
-  'housing',
-  'utilities',
-  'transport',
-  'entertainment',
-  'salary',
-  'other',
-];
+import { CATEGORIES } from '../constants';
+import { capitalize, formatCurrency } from '../utils/format';
 
 function TransactionList({
   transactions = [],
-  categories = DEFAULT_CATEGORIES,
   filterType: controlledFilterType,
   setFilterType: controlledSetFilterType,
   filterCategory: controlledFilterCategory,
@@ -68,12 +59,6 @@ function TransactionList({
     }
   }
 
-  const formatCurrency = (val) =>
-    Number(val).toLocaleString('en-US', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    });
-
   return (
     <div className="transactions">
       <div className="transactions-header">
@@ -103,9 +88,9 @@ function TransactionList({
               aria-label="Filter by category"
             >
               <option value="all">All Categories</option>
-              {categories.map((cat) => (
+              {CATEGORIES.map((cat) => (
                 <option key={cat} value={cat}>
-                  {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                  {capitalize(cat)}
                 </option>
               ))}
             </select>
@@ -144,7 +129,7 @@ function TransactionList({
                   <td className="desc-cell">{t.description}</td>
                   <td>
                     <span className={`category-tag tag-${t.category || 'other'}`}>
-                      {t.category ? t.category.charAt(0).toUpperCase() + t.category.slice(1) : 'Other'}
+                      {capitalize(t.category || 'other')}
                     </span>
                   </td>
                   <td
