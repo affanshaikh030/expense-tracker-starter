@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { CATEGORIES } from '../constants';
 import { capitalize, formatCurrency } from '../utils/format';
 
@@ -44,20 +44,16 @@ function TransactionList({
   const setFilterCategory =
     controlledSetFilterCategory || setInternalFilterCategory;
 
-  let displayTransactions = passedFilteredTransactions;
-  if (!displayTransactions) {
-    displayTransactions = transactions;
-    if (filterType !== 'all') {
-      displayTransactions = displayTransactions.filter(
-        (t) => t.type === filterType
-      );
-    }
-    if (filterCategory !== 'all') {
-      displayTransactions = displayTransactions.filter(
-        (t) => t.category === filterCategory
-      );
-    }
-  }
+  const displayTransactions = useMemo(
+    () =>
+      passedFilteredTransactions ||
+      transactions.filter(
+        (t) =>
+          (filterType === 'all' || t.type === filterType) &&
+          (filterCategory === 'all' || t.category === filterCategory)
+      ),
+    [passedFilteredTransactions, transactions, filterType, filterCategory]
+  );
 
   return (
     <div className="transactions">

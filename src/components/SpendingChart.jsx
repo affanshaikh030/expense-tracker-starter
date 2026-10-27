@@ -35,6 +35,16 @@ function CustomChartTooltip({ active, payload, totalExpense = 0 }) {
   return null;
 }
 
+const BAR_MARGIN = { top: 20, right: 20, left: 10, bottom: 5 };
+const BAR_RADIUS = [6, 6, 0, 0];
+const AXIS_LINE = { stroke: '#E2E8F0' };
+const X_TICK = { fill: '#64748B', fontSize: 12, fontWeight: 500 };
+const Y_TICK = { fill: '#64748B', fontSize: 12 };
+const LEGEND_STYLE = { paddingTop: 16 };
+
+const formatDollarTick = (val) => `$${val}`;
+const renderPieLabel = ({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`;
+
 const renderLegendText = (value) => (
   <span style={{ color: '#475569', fontSize: 13, fontWeight: 500 }}>{value}</span>
 );
@@ -64,6 +74,11 @@ function SpendingChart({ transactions = [] }) {
       totalExpense: categoryData.reduce((sum, item) => sum + item.amount, 0),
     };
   }, [transactions]);
+
+  const tooltip = useMemo(
+    () => <CustomChartTooltip totalExpense={totalExpense} />,
+    [totalExpense]
+  );
 
   return (
     <div className="spending-chart">
@@ -117,27 +132,24 @@ function SpendingChart({ transactions = [] }) {
         <div className="chart-container-box">
           <ResponsiveContainer width="100%" height={280}>
             {chartType === 'bar' ? (
-              <BarChart
-                data={data}
-                margin={{ top: 20, right: 20, left: 10, bottom: 5 }}
-              >
+              <BarChart data={data} margin={BAR_MARGIN}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
                 <XAxis
                   dataKey="name"
                   tickLine={false}
-                  axisLine={{ stroke: '#E2E8F0' }}
-                  tick={{ fill: '#64748B', fontSize: 12, fontWeight: 500 }}
+                  axisLine={AXIS_LINE}
+                  tick={X_TICK}
                 />
                 <YAxis
                   tickLine={false}
-                  axisLine={{ stroke: '#E2E8F0' }}
-                  tickFormatter={(val) => `$${val}`}
-                  tick={{ fill: '#64748B', fontSize: 12 }}
+                  axisLine={AXIS_LINE}
+                  tickFormatter={formatDollarTick}
+                  tick={Y_TICK}
                 />
-                <Tooltip content={<CustomChartTooltip totalExpense={totalExpense} />} />
-                <Bar dataKey="amount" radius={[6, 6, 0, 0]}>
-                  {data.map((entry, index) => (
-                    <Cell key={`bar-cell-${index}`} fill={entry.color} />
+                <Tooltip content={tooltip} />
+                <Bar dataKey="amount" radius={BAR_RADIUS}>
+                  {data.map((entry) => (
+                    <Cell key={entry.rawCategory} fill={entry.color} />
                   ))}
                 </Bar>
               </BarChart>
@@ -152,22 +164,19 @@ function SpendingChart({ transactions = [] }) {
                   innerRadius={55}
                   outerRadius={95}
                   paddingAngle={3}
-                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  label={renderPieLabel}
                 >
-                  {data.map((entry, index) => (
+                  {data.map((entry) => (
                     <Cell
-                      key={`pie-cell-${index}`}
+                      key={entry.rawCategory}
                       fill={entry.color}
                       stroke="#ffffff"
                       strokeWidth={2}
                     />
                   ))}
                 </Pie>
-                <Tooltip content={<CustomChartTooltip totalExpense={totalExpense} />} />
-                <Legend
-                  wrapperStyle={{ paddingTop: 16 }}
-                  formatter={renderLegendText}
-                />
+                <Tooltip content={tooltip} />
+                <Legend wrapperStyle={LEGEND_STYLE} formatter={renderLegendText} />
               </PieChart>
             )}
           </ResponsiveContainer>
